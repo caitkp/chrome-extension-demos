@@ -47,64 +47,20 @@ function buildStyleElement() {
 }
 
 // Check if "Harlem" appears anywhere in the page.
-function unhighlight() {
-  $('.cs-highlight').removeClass('cs-highlight');
-}
-
-function highlight_words(word) {
-  if(word) {
-    var textNodes;
-    word = word.replace(/\W/g, '');
-    var str = word.split(" ");
-    $(str).each(function() {
-        var term = this;
-        var textNodes = $('*').contents().filter(function() { return this.nodeType === 3 });
-        textNodes.each(function() {
-          var content = $(this).text();
-          var regex = new RegExp(term, "gi");
-          content = content.replace(regex, '<span class="cs-highlight">' + term + '</span>');
-          $(this).replaceWith(content);
-        });
-    });
-  }
-}
-
-// Check if "Harlem" appears anywhere in the page.
-function checkMatch(search_term) {
-  console.log("unhighlighting");
-  unhighlight();
-  console.log("checking match");
-  /*var divArray = document.body.getElementsByTagName('div');
+function foundMatch() {
+  var regex = /Harlem/gi;
+  var divArray = document.body.getElementsByTagName('div');
   for(var i=0; i < divArray.length; i++) {
-    var div = divArray[i];*/
-    highlight_words(search_term);
-    /*matches = div.innerText.match(search_term);
+    var div = divArray[i];
+    matches = div.innerText.match(regex);
     if (matches) {
-      //div.style.background = "blue";
-      var re = new RegExp(search_term, 'g');
-      var inner_html = div.innerHTML;
-      inner_html = inner_html.replace(re, '<span class="cs-highlight" style="background-color:blue">'+search_term+'</span>');
-      div.innerHTML = inner_html;
-      console.log("found match");
+      return true;
     }
-  }*/
+  }
+  return false;
 }
 
-function handle_request(request, sender, sendResponse) {
-  if(request && request.action && request.action == 'check_match') {
-    checkMatch(request.search_term);
-  }
-  if(sendResponse) {
-    sendResponse("done");
-  }
-}
-
-
-chrome.extension.sendRequest({action:"get_search_term"}, checkMatch);
-chrome.extension.onMessage.addListener(handle_request);
-
-
-/*// If we find the word "Harlem":
+// If we find the word "Harlem":
 if (foundMatch()) {
   // Build the element that makes the page shake, and attach it to the DOM.
   var styleElement = buildStyleElement();
@@ -121,4 +77,4 @@ if (foundMatch()) {
 
   // Start the shaking.
   startShake();
-}*/
+}

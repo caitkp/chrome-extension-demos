@@ -3,24 +3,24 @@
   "version" : "1.0.2",
   "description" : "Makes pages which contain the word 'Harlem' do the Harlem shake",
   "permissions": [
-    "https://*/*"
+    "http://*/*"
   ],
   "background": {
     "persistent": true,
     "page": "background.html"
   },
-  "browser_action": {
-    "default_icon": "highlighter.png",
-    "default_popup": "popup.html"
+  "page_action" :
+  {
+    "default_icon" : "stop.png",
+    "default_title" : "Make the shaking stop!"
   },
   "icons": {
-    "128": "highlighter.png"
+    "128": "harlem-shake.png"
   },
   "content_scripts" : [
     {
-      "matches" : [ "https://*/*" ],
-      "js" : ["jquery-1.4.2.min.js", "contentscript.js"],
-      "css": ["extension.css"],
+      "matches" : [ "http://*/*" ],
+      "js" : [ "contentscript.js" ],
       "run_at" : "document_idle",
       "all_frames" : false
     }
