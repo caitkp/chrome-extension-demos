@@ -1,0 +1,29 @@
+{
+  "name" : "Harlem Shake -- With Page Actions",
+  "version" : "1.0.2",
+  "description" : "Makes pages which contain the word 'Harlem' do the Harlem shake",
+  "permissions": [
+    "http://*/*"
+  ],
+  "background": {
+    "persistent": true,
+    "page": "background.html"
+  },
+  "page_action" :
+  {
+    "default_icon" : "stop.png",
+    "default_title" : "Make the shaking stop!"
+  },
+  "icons": {
+    "128": "harlem-shake.png"
+  },
+  "content_scripts" : [
+    {
+      "matches" : [ "http://*/*" ],
+      "js" : [ "contentscript.js" ],
+      "run_at" : "document_idle",
+      "all_frames" : false
+    }
+  ],
+  "manifest_version": 2
+}

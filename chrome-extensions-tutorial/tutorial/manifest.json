@@ -1,0 +1,28 @@
+{
+  "name" : "__MSG_extName__",
+  "manifest_version": 2,
+  "version" : "2.0.0",
+  "description" : "__MSG_extDesc__",
+  "icons" : {
+    "128" : "icon-128.png",
+    "16" : "icon-16.png"
+  },
+  "browser_action" : {
+    "default_icon" : "icon-19.png",
+    "default_title" : "",
+    "default_popup" : "popup.html"
+  },
+  "default_locale" : "en",
+  "background": {
+    "persistent": true,
+    "page": "background.html"
+  },
+  "permissions" : [
+    "tabs",
+    "bookmarks",
+    "notifications",
+    "contextMenus"
+  ],
+  "chrome_url_overrides": {
+  }
+}

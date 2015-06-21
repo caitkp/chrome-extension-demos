@@ -1,0 +1,21 @@
+{
+  "background": {
+    "persistent": true,
+    "page": "background.html"
+  },
+  "browser_action": {
+    "default_icon": "kitten.png",
+    "default_popup": "popup.html"
+  },
+  "description": "I need a kitten",
+  "icons": {
+    "128": "kitten.png"
+  },
+  "name": "Instant Kitten",
+  "permissions": [
+    "*://*.google.com/"
+   ],
+  "version": "1.0",
+  "content_security_policy": "script-src 'self' https://www.google.com/jsapi https://www.google.com/uds/?file=search&v=1; object-src 'self'",
+  "manifest_version": 2
+}

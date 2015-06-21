@@ -1,0 +1,22 @@
+{
+  "extName" : {
+    "message" : "All-Girl Hack Night -- How to build a Google Chrome Extension",
+    "description" : "Extension name."
+  },
+  "extDesc" : {
+    "message" : "A Google Chrome extension that contains a presentation about Google Chrome extensions. Meta!",
+    "description" : "Extension description."
+  },
+  "slidesPageTitle" : {
+    "message" : "Chrome!",
+    "description" : "Page title for the slides page."
+  },
+  "startPreso" : {
+    "message" : "Make presentation go!",
+    "description" : "Link text to open the slide page."
+  },
+  "slidesTitle" : {
+    "message" : "Google Chrome Extensions For Fun and Profit",
+    "description" : "Presentation title"
+  }
+}

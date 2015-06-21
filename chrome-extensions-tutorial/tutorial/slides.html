@@ -1,0 +1,715 @@
+<!DOCTYPE html>
+<!--
+Copyright 2010 Google Inc.
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+     http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+-->
+<html>
+  <head>
+    <title>__MSG_slidesPageTitle__</title>
+    <script src="scripts/jquery-1.4.2.min.js"></script>
+    <script src="scripts/slideElf.js"></script>
+    <script src="scripts/main.js"></script>
+    <script src="scripts/functions.js"></script>
+    <link rel="stylesheet" href="styles/styles.css" />
+    <link href='http://fonts.googleapis.com/css?family=Droid+Sans' rel='stylesheet' type='text/css'>
+    <link href='http://fonts.googleapis.com/css?family=Oswald' rel='stylesheet' type='text/css'>
+  </head>
+  <body class="slides">
+    <div id="presentation">
+      <div id="slides">
+        <div class="slide" style="background: #ff6600; color: #fff;">
+          <div class="vbox center fullheight">
+            <h1>__MSG_slidesTitle__</h1>
+          </div>
+        </div>
+
+        <div class="slide">
+          <div class="vbox center fullheight">
+            <h2>What are extensions?</h2>
+            <p>(Hint: You're looking at one)</p>
+          </div>
+        </div>
+
+        <div class="slide">
+          <div class="centeredslidecontent">
+            <img src="content/chromewebstore.png" style="margin: 0 auto;"/>
+            <p><a target="_blank" href="http://chrome.google.com/webstore">http://chrome.google.com/webstore</a></p>
+          </div>
+        </div>
+
+        <div class="slide">
+          <h3>Process isolation</h3>
+          <div class="vbox center fullheight">
+            <p><img src="content/processes.png" style="margin: 0 auto;"/></p>
+          </div>
+        </div>
+
+        <div class="slide">
+          <h3>Security sandbox</h3>
+          <div class="vbox center" style="height:90%">
+            <p><img src="content/sandboxing.png" style="margin: 0 auto;"/></p>
+            More info: <a href="http://www.chromium.org/developers/design-documents/sandbox/Sandbox-FAQ">http://www.chromium.org/developers/design-documents/sandbox/Sandbox-FAQ</a>
+          </div>
+        </div>
+
+        <div class="slide" style="background: #fff url(content/onezero.png) no-repeat bottom left;">
+          <div class="vbox center fullheight">
+            <h2>How do you write an extension?</h2>
+          </div>
+        </div>
+
+        <div class="slide">
+          <h3><div class="shadow">1:</div> Define a manifest.json settings file</h3>
+          <div class="centeredslidecontent" style="text-align: left; width: 80%; left: 10%;">
+            <pre>
+              <code>
+{
+  "name": "Instant Kitten",
+  "version": 1.0,
+  "description": "Kittens on demand",
+  "permissions": [ ... ],
+  "background": {
+    "persistent": true,
+    "page": "background.html"
+  },
+
+  "icons": {
+    "128": "kitten.png"
+  },
+
+  "manifest_version": 2
+}
+
+              </code>
+            </pre>
+             <p>Settings and pointers to your extension's content</p>
+          </div>
+        </div>
+
+        <div class="slide">
+          <h3><div class="shadow">2:</div> Add a background page...</h3>
+          <div class="centeredslidecontent" style="text-align: left; width: 80%; left: 10%;">
+            <pre>
+              <code>
+{
+  "name": "Instant Kitten",
+  "version": 1.0,
+  "description": "Kittens on demand",
+  "permissions": [ ... ],
+  "background": {
+    "persistent": true,
+    <strong>"page": "background.html"</strong>
+  },
+
+  "icons": {
+    "128": "kitten.png"
+  },
+
+  "manifest_version": 2
+}
+              </code>
+            </pre>
+          </div>
+        </div>
+
+        <div class="slide">
+          <h3><div class="shadow">2:</div> Add a background page...</h3>
+          <div class="centeredslidecontent" style="text-align: left; width: 80%; left: 10%;">
+            background.html:
+            <pre>
+              <code>
+&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+  &lt;head&gt;
+    &lt;script src="hello_world.js"&gt;&lt;/script&gt;
+  &lt;/head&gt;
+  &lt;body&gt;
+  &lt;/body&gt;
+&lt;/html&gt;
+              </code>
+            </pre>
+            hello_world.js:
+              <code>
+      <strong>alert(&#x27;hello, world!&#x27;);</strong>
+              </code>
+            <p>(Will alert once per browser load)</p>
+          </div>
+        </div>
+
+        <div class="slide" style="background: #fff url(content/integrate.png) no-repeat bottom right;">
+          <div class="vbox center fullheight">
+            <h2>Types of extensions</h2>
+          </div>
+        </div>
+
+        <div class="slide">
+          <h3><div class="shadow">#1:</div> Browser action</h3>
+          <p>(if your extension does not interact with the current page)</p>
+          <div><img src="content/surface-browseraction.png" style="display: block; margin: 0 auto; height: 200px; width: auto;"/></div>
+          <div style="text-align: left; width: 80%; left: 10%;">
+            <pre>
+              <code>
+"browser_action" : {
+  "default_icon": "images/icon19.png", // required
+  "default_title": "I'm a title"       // optional
+},
+              </code>
+            </pre>
+          </div>
+        </div>
+
+        <div class="slide">
+          <h3>A dynamic icon</h3>
+          <div class="centeredslidecontent" style="text-align: left; padding-left: 30px;">
+            <p>
+              <code>chrome.browserAction.setIcon(...);</code><br>
+              <canvas width="19" height="19" id="canvasicon">
+              </canvas>
+              <button id="animate-button">Execute</button>
+            </p>
+            <p>
+              <code>chrome.browserAction.setBadgeText(...);</code><br>
+              <input type="text" id="badgetext" placeholder="Set the badge text"/>
+              <button id="badge-text-button">Set</button>
+              <button id="clear-badge-text-button">Clear</button>
+            </p>
+            <p>
+              <code>chrome.browserAction.setBadgeBackgroundColor(...);</code><br>
+              <button id="badge-color-button-1">Red</button>
+              <button id="badge-color-button-2">Green</button>
+              <button id="badge-color-button-3">Blue</button>
+            </p>
+          </div>
+        </div>
+
+        <div class="slide">
+          <h3><div class="shadow">#2:</div> Page action</h3>
+          <p>(if you want to expose page-specific functionality)</p>
+          <div><img src="content/surface-pageaction.png" style="display: block; margin: 0 auto; height: 200px; width: auto;"/></div>
+          <div style="text-align: left; width: 80%; left: 10%;">
+            <pre>
+              <code>
+"page_action" : {
+  "default_icon": "images/icon19.png", // required
+  "default_title": "I'm a title"       // optional
+},
+              </code>
+            </pre>
+          </div>
+        </div>
+
+        <div class="slide">
+          <h3><div class="shadow">#3:</div> Popups</h3>
+          <div class="centeredslidecontent">
+            <img style="top: 0px; left: 200px;" class=" positioned" src="content/surface-browseractionpopup.png" />
+            <img style="top: 100px; left: 50px;" class=" positioned" src="content/surface-pageactionpopup.png" />
+          </div>
+          <div style="text-align: left; width: 80%; left: 10%; top: 400px" class="positioned">
+            <pre>
+              <code>
+"page_action" : {
+  "default_icon": "images/icon19.png", // required
+  "default_title": "I'm a title",      // optional
+  <strong>"default_popup": "popup.html"</strong>
+},
+              </code>
+            </pre>
+          </div>
+        </div>
+
+        <div class="slide" style="background: #fff url(content/four.png) no-repeat bottom left;">
+          <h3>Content scripts</h3>
+          <div class="centeredslidecontent">
+            <div><img src="content/surface-contentscript.png" style="display: block; margin: 0 auto;"/></div>
+            <button id="content-script-demo" >Run Content Script</button>
+          </div>
+        </div>
+
+        <div class="slide" style="background: #fff url(content/fittogether.png) no-repeat bottom center;">
+          <div class="centeredslidecontent">
+            <h2>How do these parts fit together?</h2>
+          </div>
+        </div>
+
+        <div class="slide">
+          <h3>Manifest identifies source files</h3>
+          <div class="centeredslidecontent">
+            <img src="content/puttogether01.png" />
+          </div>
+        </div>
+
+        <div class="slide">
+          <div class="centeredslidecontent">
+            <img src="content/backgroundpage-02.png" />
+            <p>The <strong>background page</strong> calls <code>chrome.*</code> functions to initialize the extension <br> and perform background tasks.</p>
+          </div>
+        </div>
+
+        <div class="slide">
+          <h3>Sharing windows</h3>
+          <div class="centeredslidecontent" style="text-align: left; width: 90%; left: 5%;">
+            <div><img src="content/puttogether02.png" style="display: block; margin: 0 auto;"/></div>
+            <p>The <strong>background page</strong> and most other extension pages like the <strong>popup</strong> can share window objects.</p>
+            <pre style="text-align: left"><code><var>background.html -> popup.html</var>
+popups = chrome.extension.getViews({ 'type' : 'popup' });
+popups.forEach(win) {
+  <strong>// Win points to the popup's Window object.</strong>
+};
+
+<var>popup.html -> background.html</var>
+var bg = chrome.extension.getBackgroundPage();
+<strong>// Now bg points to the background page's window</strong></code></pre>
+          </div>
+        </div>
+
+        <div class="slide">
+          <h3>Sandboxed windows</h3>
+          <div class="centeredslidecontent" style="text-align: left; width: 90%; left: 5%;">
+            <div><img src="content/puttogether03.png" style="display: block; margin: 0 auto;"/></div>
+            <p>However, <strong>background pages</strong> and <strong>content scripts</strong> are sandboxed.
+              Developers must use message passing instead:</p>
+            <pre style="text-align: left"><code><var>contentscript.js</var>
+function onResponse(resp) { console.log(resp.welcome); }
+<strong>chrome.extension.sendRequest</strong>({myname: "Bob"}, onResponse);
+
+<var>background.html</var>
+function onRequest(request, sender, sendResponse) {
+  sendResponse({welcome: "Hello, " + request.myname});
+};
+<strong>chrome.extension.onRequest.addListener</strong>(onRequest);</code></pre>
+          </div>
+        </div>
+
+        <div class="slide">
+          <h3>Isolated worlds</h3>
+          <div class="centeredslidecontent" style="text-align: left; width: 90%; left: 5%;">
+            <div><img src="content/puttogether04.png" style="display: block; margin: 0 auto;"/></div>
+            <p><strong>Content scripts</strong> may directly access the DOM of the page they are running on, but cannot directly access JavaScript objects.</p>
+            <pre style="text-align: left"><code><var>DOM</var>
+var anchors = document.querySelectorAll('a');
+
+<var>JavaScript</var>
+var script = document.createElement('script');
+script.innerText = 'code to execute';
+document.body.appendChild(script);</code></pre>
+          </div>
+        </div>
+
+        <div class="slide">
+          <h3>Limited privilege</h3>
+          <div class="centeredslidecontent" style="text-align: left; width: 90%; left: 5%;">
+            <div><img src="content/puttogether05.png" style="display:block; margin: 0 auto;"/></div>
+            <p>
+              <strong>Content scripts</strong> also may not use any
+              <code>chrome.*</code> APIs, except those in
+              <code>chrome.extension.*</code>.
+            </p>
+            <p>
+              Typically, a content script only routes data between the current
+              HTML page and the background page of an extension.
+            </p>
+          </div>
+        </div>
+
+        <div class="slide" style="background: #fff url(content/integrate.png) no-repeat bottom right;">
+          <div class="vbox center fullheight">
+            <h2>Example 1: Kittens!</h2>
+          </div>
+        </div>
+
+        <div class="slide">
+          <div class="vbox center fullheight">
+            <div style="padding-left: 40px; text-align: left;">
+              <h3>Files we need:</h3>
+              <ul>
+                <li><code>manifest.json</code>: Tells the extension where the other files can be found.</li>
+                <li><code>background.html</code>: Background page (loads when the browser loads)</li>
+                <li><code>background.js</code>: Scripts used by the background page</li>
+                <li><code>popup.html</code>: Popup page (loads when the browser action is clicked).</li>
+                <li><code>popup.js</code>: Scripts used by the popup page.</li>
+                <li>Etc: Any icons/images/css/fonts etc. we wish to use in the extension.</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <div class="slide">
+          <h3>Background page loads:</h3>
+          <div><img src="content/backgroundpage-02.png" style="display: block; margin: 0; height:150px; width:auto;"/></div>
+          <div style="text-align: left; width: 80%; left: 10%;">
+            <pre>
+              <code>
+// Listen for the popup to send a
+// message to the background page.
+
+<strong>chrome.extension.onRequest.addListener</strong>(onKittenRequest);
+              </code>
+            </pre>
+          </div>
+        </div>
+
+        <div class="slide">
+          <h3>Browser action clicked:</h3>
+          <div><img src="content/surface-browseractionpopup.png" style="display: block; margin: 0; height:150px; width:auto;"/></div>
+          <div style="text-align: left; width: 80%; left: 10%;">
+            <pre>
+              <code>
+// Request a kitten.
+
+<strong>chrome.extension.sendRequest</strong>("ICanHazKitten", foundAKitten);
+              </code>
+            </pre>
+          </div>
+        </div>
+
+        <div class="slide">
+          <h3>Background page receives request:</h3>
+          <div><img src="content/backgroundpage-02.png" style="display: block; margin: 0; height:150px; width:auto;"/></div>
+          <div style="text-align: left; width: 80%; left: 10%;">
+            <pre>
+              <code>
+// Handles requests sent by the popup (returns a kitten image).
+
+function onKittenRequest(request, sender, <strong>sendResponse</strong>) {
+  var nextKitten = getNextImage();
+  var imageData = getImageData(nextKitten);
+
+  // Send data to popup.
+  <strong>sendResponse</strong>(imageData);
+
+  // Pre-load the next image now.
+  loadNextImage();
+};
+              </code>
+            </pre>
+          </div>
+        </div>
+
+        <div class="slide">
+          <h3>Popup Updates:</h3>
+          <div><img src="content/popup.png" style="display: block; margin: 0; height:150px; width:auto;"/></div>
+          <div style="text-align: left; width: 80%; left: 10%;">
+            <pre>
+              <code>
+function foundAKitten(kitten) {
+  // Grab our content div, clear it.
+  var contentDiv = document.getElementById('content');
+  contentDiv.innerHTML = '';
+
+  // Build HTML for new image:
+  var imgContainer = BuildHTML(kitten);
+
+  // Put our title + image in the content:
+  contentDiv.appendChild(imgContainer);
+};
+              </code>
+            </pre>
+          </div>
+        </div>
+
+        <div class="slide" style="background: #fff url(content/integrate.png) no-repeat bottom right;">
+          <div class="vbox center fullheight">
+            <h2>Example 2: Harlem shake!</h2>
+          </div>
+        </div>
+
+        <div class="slide">
+          <div class="vbox center fullheight">
+            <div style="padding-left: 40px; text-align: left;">
+              <h3>Files we need:</h3>
+              <ul>
+                <li><code>manifest.json</code>: Tells the extension where the other files can be found.</li>
+                <li><code>contentscript.js</code>: Script to be injected into page.</li>
+                <li>Etc: Any icons/images/css/fonts etc. we wish to use in the extension.</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <div class="slide">
+          <h3>When a page loads:</h3>
+          <div><img src="content/backgroundpage-02.png" style="display: block; margin: 0; height:150px; width:auto;"/></div>
+          <div style="text-align: left; width: 80%; left: 10%;">
+            <pre>
+              <code>
+// Inject the content script into the page
+// once the page has loaded.
+
+"content_scripts" : [
+  {
+    "matches" : [ "http://*/*" ],
+    "js" : [ "<strong>contentscript.js</strong>" ],
+    "run_at" : "document_idle",
+    "all_frames" : false
+  }
+]
+              </code>
+            </pre>
+          </div>
+        </div>
+
+        <div class="slide">
+          <h3>Content Script Executes:</h3>
+          <div><img src="content/contentscript.png" style="display: block; margin: 0; height:150px; width:auto;"/></div>
+          <div style="text-align: left; width: 80%; left: 10%;">
+            <pre>
+              <code>
+// Check if "Harlem" appears anywhere in the page.
+
+function foundMatch() {
+  var regex = /Harlem/gi;
+  var divArray = document.body.getElementsByTagName('div');
+  for(var i=0; i &lt divArray.length; i++) {
+    var div = divArray[i];
+    matches = div.innerText.match(regex);
+    if (matches) {
+      return true;
+    }
+  }
+  return false;
+}
+              </code>
+            </pre>
+          </div>
+        </div>
+
+        <div class="slide">
+          <h3>Content Script Executes:</h3>
+          <div><img src="content/contentscript.png" style="display: block; margin: 0; height:150px; width:auto;"/></div>
+          <div style="text-align: left; width: 80%; left: 10%;">
+            <pre>
+              <code>
+if (foundMatch()) {
+  // Set up the element that makes the page shake:
+  var styleElement = buildStyleElement();
+  var head = document.getElementsByTagName('head')[0];
+  head.appendChild(styleElement);
+
+  // Set up the element that makes the shaking stop:
+  var stop = buildStopElement();
+  document.body.insertBefore(stop, document.body.childNodes[0]);
+
+  // Start the shaking!
+  startShake();
+}
+              </code>
+            </pre>
+          </div>
+        </div>
+
+        <div class="slide" style="background: #fff url(content/integrate.png) no-repeat bottom right;">
+          <div class="vbox center fullheight">
+            <h2>Example 3: Harlem shake (with a page action)!</h2>
+          </div>
+        </div>
+
+        <div class="slide">
+          <div class="vbox center fullheight">
+            <div style="padding-left: 40px; text-align: left;">
+              <h3>Files we need:</h3>
+              <ul>
+                <li><code>manifest.json</code>: Tells the extension where the other files can be found.</li>
+                <li><code>contentscript.js</code>: Script to be injected into page.</li>
+                <li><code>background.html</code>: Page to load in the background.</li>
+                <li><code>background.js</code>: Script to run on background page.</li>
+                <li>Etc: Any icons/images/css/fonts etc. we wish to use in the extension.</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <div class="slide">
+          <h3>Background page loads:</h3>
+          <div><img src="content/backgroundpage-02.png" style="display: block; margin: 0; height:150px; width:auto;"/></div>
+          <div style="text-align: left; width: 80%; left: 10%;">
+            <pre>
+              <code>
+// Listen for the contentscript to
+// send a message to the background page.
+
+<strong>chrome.extension.onRequest.addListener</strong>(showPageAction);
+              </code>
+            </pre>
+          </div>
+        </div>
+
+        <div class="slide">
+          <h3>Once we've found a match:</h3>
+          <div><img src="content/contentscript.png" style="display: block; margin: 0; height:150px; width:auto;"/></div>
+          <div style="text-align: left; width: 80%; left: 10%;">
+            <pre>
+              <code>
+if (foundMatch()) {
+  // Build the element that makes the page shake:
+  ...
+
+  // Tell to the background page to show the pageAction:
+  <strong>chrome.extension.sendRequest</strong>({}, function(response) {});
+
+  // Listen for the background page to tell
+  // us that the "stop" pageAction was clicked:
+  <strong>chrome.extension.onMessage.addListener</strong>(stopShake);
+
+  // Start the shaking.
+  startShake();
+}
+              </code>
+            </pre>
+          </div>
+        </div>
+
+        <div class="slide">
+          <h3>Background Page:</h3>
+          <div><img src="content/backgroundpage-02.png" style="display: block; margin: 0; height:150px; width:auto;"/></div>
+          <div style="text-align: left; width: 80%; left: 10%;">
+            <pre>
+              <code>
+function showPageAction(request, sender, sendResponse) {
+  // Show the page action for the tab that the sender
+  // (content script) was on.
+  <strong>chrome.pageAction.show</strong>(sender.tab.id);
+
+  // Listen for when the user clicks on the page action.
+  <strong>chrome.pageAction.onClicked.addListener</strong>(hidePageAction);
+};
+              </code>
+            </pre>
+          </div>
+        </div>
+
+        <div class="slide">
+          <h3>When the page action is clicked:</h3>
+          <div><img src="content/surface-pageaction.png" style="display: block; margin: 0; height:150px; width:auto;"/></div>
+          <div style="text-align: left; width: 80%; left: 10%;">
+            <pre>
+              <code>
+function hidePageAction(tab) {
+  // Hide the page action icon:
+  <strong>chrome.pageAction.hide</strong>(tab.id);
+
+  // Send a message to the content script on the
+  // tab where the click came from:
+  <strong>chrome.tabs.sendMessage</strong>(
+        tab.id,
+        {action: "stop_shaking"},
+        function(response) {});
+};
+              </code>
+            </pre>
+          </div>
+        </div>
+
+
+        <div class="slide">
+          <h3>Back to the Content Script:</h3>
+          <div><img src="content/contentscript.png" style="display: block; margin: 0; height:150px; width:auto;"/></div>
+          <div style="text-align: left; width: 80%; left: 10%;">
+            Remember -- it is listening for a message from the background page:
+            <pre>
+              <code>
+<strong>chrome.extension.onMessage.addListener</strong>(stopShake);
+              </code>
+            </pre>
+            When it receives one, it will execute <code>stopShake();</code>.
+          </div>
+        </div>
+
+        <div class="slide" style="background: #fff url(content/integrate.png) no-repeat bottom right;">
+          <h3>Moral of the story:</h3>
+          <div class="vbox center" style="height: 70%;">
+            <h4>You can build some pretty fancy things by making these three simple parts (background page, page/browser action, and content script) work together.</h4>
+          </div>
+        </div>
+
+
+        <div class="slide">
+          <h3>Asynchronous code</h3>
+          <div class="centeredslidecontent" style="text-align: left; width: 90%; left: 5%;">
+            <p>
+              Many of these requests cross process boundaries.  This is why
+              much of the <code>chrome.*</code> API uses asynchronous calls:
+            </p>
+            <pre><code>// THIS CODE DOESN'T WORK:
+var windows = chrome.windows.getAll(); //WRONG!!!
+            </code></pre>
+            <pre><code>// THIS CODE WORKS:
+chrome.windows.getAll({}, function(window) {
+  <strong>// This code is called asynchronsly</strong>
+});
+            </code></pre>
+          </div>
+        </div>
+
+          <div class="slide">
+          <h3>Content Security Policies:</h3>
+          <div class="centeredslidecontent" style="text-align: left; width: 90%; left: 5%;">
+            <p>
+              If you see this in your log:
+              <pre>
+              <code style="color: red">
+Refused to execute inline script because it violates
+the following Content Security Policy directive:
+"script-src 'self' chrome-extension-resource:".
+              </code>
+              </pre>
+              ...then you need to modify the Content Security
+Policy (in <code>manifest.json</code>).
+            </p>
+            <pre><code>"content_security_policy": "[POLICY STRING GOES HERE]"
+            </code></pre>
+            <p> More info: <a href="https://developer.chrome.com/extensions/contentSecurityPolicy.html">https://developer.chrome.com/extensions/contentSecurityPolicy.html</a>
+          </div>
+        </div>
+
+        <div class="slide">
+          <div class="vbox center fullheight">
+            <div style="padding-left: 140px; text-align: left;">
+              <h3>Simple <code>chrome.*</code> APIs</h3>
+              <p>For things that a regular web page can't do:</p>
+              <ul>
+                <li><code>bookmarks</code></li>
+                <li><code>history</code></li>
+                <li><code>i18n</code></li>
+                <li><code>processes</code></li>
+                <li><code>tabs / windows</code></li>
+              </ul>
+              And more: <a href="https://developer.chrome.com/extensions/api_index.html">https://developer.chrome.com/extensions/api_index.html</a>
+            </div>
+          </div>
+        </div>
+
+         <div class="slide">
+          <div class="vbox center fullheight">
+            <div style="padding-left: 40px; text-align: left;">
+              <h3>Resources:</h3>
+              <ul>
+                <li>Getting started: <a href="https://developer.chrome.com/extensions/getstarted.html">https://developer.chrome.com/extensions/getstarted.html</a></li>
+                <li>Overview: <a href="https://developer.chrome.com/extensions/overview.html">https://developer.chrome.com/extensions/overview.html</a></li>
+                <li>Debugging: <a href="https://developer.chrome.com/extensions/tut_debugging.html">https://developer.chrome.com/extensions/tut_debugging.html</a></li>
+                <li>More Examples: <a href="http://developer.chrome.com/extensions/samples.html">http://developer.chrome.com/extensions/samples.html</a>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <div class="slide" style="background: #fff url(content/onezero.png) no-repeat bottom right;">
+          <div class="vbox center fullheight">
+            <h2>Happy Coding!</h2>
+            <p>See you at <a target="_blank" href="http://code.google.com/chrome/extensions">code.google.com/chrome/extensions/</a></p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

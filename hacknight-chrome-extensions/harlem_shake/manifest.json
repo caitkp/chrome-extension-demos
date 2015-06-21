@@ -1,0 +1,20 @@
+{
+  "name" : "Harlem Shake",
+  "version" : "1.0.1",
+  "description" : "Makes pages which contain the word 'Harlem' do the Harlem shake",
+  "permissions": [
+    "http://*/*"
+  ],
+  "icons": {
+    "128": "harlem-shake.png"
+  },
+  "content_scripts" : [
+    {
+      "matches" : [ "http://*/*" ],
+      "js" : [ "contentscript.js" ],
+      "run_at" : "document_idle",
+      "all_frames" : false
+    }
+  ],
+  "manifest_version": 2
+}
