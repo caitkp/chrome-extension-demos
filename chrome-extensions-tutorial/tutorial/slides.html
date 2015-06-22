@@ -420,7 +420,7 @@ function foundAKitten(kitten) {
 
         <div class="slide" style="background: #fff url(content/integrate.png) no-repeat bottom right;">
           <div class="vbox center fullheight">
-            <h2>Example 2: Harlem shake!</h2>
+            <h2>Example 2: Highlighter</h2>
           </div>
         </div>
 
@@ -431,6 +431,9 @@ function foundAKitten(kitten) {
               <ul>
                 <li><code>manifest.json</code>: Tells the extension where the other files can be found.</li>
                 <li><code>contentscript.js</code>: Script to be injected into page.</li>
+                <li><code>background.js</code>: Scripts used by the background page</li>
+                <li><code>popup.html</code>: Popup page (loads when the browser action is clicked).</li>
+                <li><code>popup.js</code>: Scripts used by the popup page.</li>
                 <li>Etc: Any icons/images/css/fonts etc. we wish to use in the extension.</li>
               </ul>
             </div>
@@ -448,7 +451,7 @@ function foundAKitten(kitten) {
 
 "content_scripts" : [
   {
-    "matches" : [ "http://*/*" ],
+    "matches" : [ "https://*/*" ],
     "js" : [ "<strong>contentscript.js</strong>" ],
     "run_at" : "document_idle",
     "all_frames" : false
@@ -465,20 +468,15 @@ function foundAKitten(kitten) {
           <div style="text-align: left; width: 80%; left: 10%;">
             <pre>
               <code>
-// Check if "Harlem" appears anywhere in the page.
+// Sends a request to the background page
+// to get the search term to highlight.
+<strong>chrome.extension.sendRequest</strong>(
+    {action:"get_search_term"}, checkMatch);
 
-function foundMatch() {
-  var regex = /Harlem/gi;
-  var divArray = document.body.getElementsByTagName('div');
-  for(var i=0; i &lt divArray.length; i++) {
-    var div = divArray[i];
-    matches = div.innerText.match(regex);
-    if (matches) {
-      return true;
-    }
-  }
-  return false;
-}
+// Listen for updates to the search term.
+<strong>chrome.extension.onMessage.addListener</strong>(
+    handle_request);
+
               </code>
             </pre>
           </div>
@@ -490,79 +488,14 @@ function foundMatch() {
           <div style="text-align: left; width: 80%; left: 10%;">
             <pre>
               <code>
-if (foundMatch()) {
-  // Set up the element that makes the page shake:
-  var styleElement = buildStyleElement();
-  var head = document.getElementsByTagName('head')[0];
-  head.appendChild(styleElement);
+// Check if the search term appears anywhere in the page.
+function checkMatch(search_term) {
 
-  // Set up the element that makes the shaking stop:
-  var stop = buildStopElement();
-  document.body.insertBefore(stop, document.body.childNodes[0]);
+  // Remove any previous highlights
+  <strong>unhighlight</strong>();
 
-  // Start the shaking!
-  startShake();
-}
-              </code>
-            </pre>
-          </div>
-        </div>
-
-        <div class="slide" style="background: #fff url(content/integrate.png) no-repeat bottom right;">
-          <div class="vbox center fullheight">
-            <h2>Example 3: Harlem shake (with a page action)!</h2>
-          </div>
-        </div>
-
-        <div class="slide">
-          <div class="vbox center fullheight">
-            <div style="padding-left: 40px; text-align: left;">
-              <h3>Files we need:</h3>
-              <ul>
-                <li><code>manifest.json</code>: Tells the extension where the other files can be found.</li>
-                <li><code>contentscript.js</code>: Script to be injected into page.</li>
-                <li><code>background.html</code>: Page to load in the background.</li>
-                <li><code>background.js</code>: Script to run on background page.</li>
-                <li>Etc: Any icons/images/css/fonts etc. we wish to use in the extension.</li>
-              </ul>
-            </div>
-          </div>
-        </div>
-
-        <div class="slide">
-          <h3>Background page loads:</h3>
-          <div><img src="content/backgroundpage-02.png" style="display: block; margin: 0; height:150px; width:auto;"/></div>
-          <div style="text-align: left; width: 80%; left: 10%;">
-            <pre>
-              <code>
-// Listen for the contentscript to
-// send a message to the background page.
-
-<strong>chrome.extension.onRequest.addListener</strong>(showPageAction);
-              </code>
-            </pre>
-          </div>
-        </div>
-
-        <div class="slide">
-          <h3>Once we've found a match:</h3>
-          <div><img src="content/contentscript.png" style="display: block; margin: 0; height:150px; width:auto;"/></div>
-          <div style="text-align: left; width: 80%; left: 10%;">
-            <pre>
-              <code>
-if (foundMatch()) {
-  // Build the element that makes the page shake:
-  ...
-
-  // Tell to the background page to show the pageAction:
-  <strong>chrome.extension.sendRequest</strong>({}, function(response) {});
-
-  // Listen for the background page to tell
-  // us that the "stop" pageAction was clicked:
-  <strong>chrome.extension.onMessage.addListener</strong>(stopShake);
-
-  // Start the shaking.
-  startShake();
+  // highlight all words matching the current search term.
+  <strong>highlight_words</strong>(search_term);
 }
               </code>
             </pre>
@@ -570,60 +503,64 @@ if (foundMatch()) {
         </div>
 
         <div class="slide">
-          <h3>Background Page:</h3>
+          <h3>Browser Action: Popup Opened</h3>
+          <div><img src="content/popup.png" style="display: block; margin: 0; height:150px; width:auto;"/></div>
+          <div style="text-align: left; width: 80%; left: 10%;">
+            <pre>
+              <code>
+  // Update search-term when "submit" button is clicked or
+  // enter is pressed.
+  document.getElementById("submit-button").onclick =
+    <strong>SendToContentScript</strong>;
+  document.getElementById("search-term").onkeydown =
+    <strong>SubmitOnEnter</strong>;
+              </code>
+            </pre>
+          </div>
+        </div>
+
+        <div class="slide">
+          <h3>Browser Action: Sends new search-term to background page</h3>
+          <div><img src="content/popup.png" style="display: block; margin: 0; height:150px; width:auto;"/></div>
+          <div style="text-align: left; width: 80%; left: 10%;">
+            <pre>
+              <code>
+// Send the new search term to the page so it can
+// update highlighting.
+function <strong>SendToBackgroundPage</strong>() {
+  var input = document.getElementById('search-term');
+  var text = input.value;
+  <strong>chrome.extension.sendRequest</strong>(
+      {action: "update_search_term", new_term: text});
+  window.close();
+}
+              </code>
+            </pre>
+          </div>
+        </div>
+
+       <div class="slide">
+          <h3>Background Page: Notifies content scripts</h3>
           <div><img src="content/backgroundpage-02.png" style="display: block; margin: 0; height:150px; width:auto;"/></div>
           <div style="text-align: left; width: 80%; left: 10%;">
             <pre>
-              <code>
-function showPageAction(request, sender, sendResponse) {
-  // Show the page action for the tab that the sender
-  // (content script) was on.
-  <strong>chrome.pageAction.show</strong>(sender.tab.id);
-
-  // Listen for when the user clicks on the page action.
-  <strong>chrome.pageAction.onClicked.addListener</strong>(hidePageAction);
+              <code>.
+function updateSearchTerm(new_term) {
+  search_term = new_term;
+  <strong>chrome.tabs.query</strong>(
+      {currentWindow: true}, function(tabs) {
+        for (index in tabs) {
+          <strong>chrome.tabs.sendMessage</strong>(
+              tabs[index].id,
+              {action: 'check_match', search_term: search_term});
+        }
+  });
 };
               </code>
             </pre>
           </div>
         </div>
 
-        <div class="slide">
-          <h3>When the page action is clicked:</h3>
-          <div><img src="content/surface-pageaction.png" style="display: block; margin: 0; height:150px; width:auto;"/></div>
-          <div style="text-align: left; width: 80%; left: 10%;">
-            <pre>
-              <code>
-function hidePageAction(tab) {
-  // Hide the page action icon:
-  <strong>chrome.pageAction.hide</strong>(tab.id);
-
-  // Send a message to the content script on the
-  // tab where the click came from:
-  <strong>chrome.tabs.sendMessage</strong>(
-        tab.id,
-        {action: "stop_shaking"},
-        function(response) {});
-};
-              </code>
-            </pre>
-          </div>
-        </div>
-
-
-        <div class="slide">
-          <h3>Back to the Content Script:</h3>
-          <div><img src="content/contentscript.png" style="display: block; margin: 0; height:150px; width:auto;"/></div>
-          <div style="text-align: left; width: 80%; left: 10%;">
-            Remember -- it is listening for a message from the background page:
-            <pre>
-              <code>
-<strong>chrome.extension.onMessage.addListener</strong>(stopShake);
-              </code>
-            </pre>
-            When it receives one, it will execute <code>stopShake();</code>.
-          </div>
-        </div>
 
         <div class="slide" style="background: #fff url(content/integrate.png) no-repeat bottom right;">
           <h3>Moral of the story:</h3>
@@ -645,7 +582,7 @@ var windows = chrome.windows.getAll(); //WRONG!!!
             </code></pre>
             <pre><code>// THIS CODE WORKS:
 chrome.windows.getAll({}, function(window) {
-  <strong>// This code is called asynchronsly</strong>
+  <strong>// This code is called asynchronously</strong>
 });
             </code></pre>
           </div>
@@ -698,6 +635,7 @@ Policy (in <code>manifest.json</code>).
                 <li>Overview: <a href="https://developer.chrome.com/extensions/overview.html">https://developer.chrome.com/extensions/overview.html</a></li>
                 <li>Debugging: <a href="https://developer.chrome.com/extensions/tut_debugging.html">https://developer.chrome.com/extensions/tut_debugging.html</a></li>
                 <li>More Examples: <a href="http://developer.chrome.com/extensions/samples.html">http://developer.chrome.com/extensions/samples.html</a>
+                 <li>Exapmles from this presentation: <a href="https://goo.gl/1hrJJg">https://goo.gl/1hrJJg</a>
               </ul>
             </div>
           </div>
